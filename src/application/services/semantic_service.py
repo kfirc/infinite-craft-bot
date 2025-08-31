@@ -28,7 +28,7 @@ except ImportError:
     print("⚠️ sentence-transformers not available. Install with: pip install sentence-transformers")
 
 
-class SemanticWordFinder:
+class SemanticService:
     """
     Intelligent word combination finder using semantic similarity.
 
@@ -65,7 +65,7 @@ class SemanticWordFinder:
             self.log("WARNING", "⚠️ Sentence transformers not available - falling back to basic heuristics")
 
     def log(self, level: str, message: str):
-        """Simple logging with timestamp."""
+        """Log a message with a timestamp."""
         timestamp = datetime.now().strftime("%H:%M:%S")
         print(f"[{timestamp}] {level}: {message}")
 
@@ -303,56 +303,3 @@ class SemanticWordFinder:
     def is_model_available(self) -> bool:
         """Check if semantic model is available."""
         return self.model is not None
-
-
-# Test function
-def test_semantic_finder():
-    """Test the semantic finder with sample data."""
-    print("🧪 Testing Semantic Word Finder")
-    print("=" * 50)
-
-    finder = SemanticWordFinder()
-
-    # Sample test data
-    available_words = [
-        "Water",
-        "Fire",
-        "Wind",
-        "Earth",
-        "Plant",
-        "Steam",
-        "Cloud",
-        "Rain",
-        "Lightning",
-        "Tree",
-        "Wood",
-        "Metal",
-        "Stone",
-        "Glass",
-        "Ice",
-        "Mud",
-        "Sand",
-        "Dust",
-    ]
-
-    target_word = "Forest"
-
-    print(f"Available words: {available_words}")
-    print(f"Target word: {target_word}")
-    print()
-
-    # Find best combinations
-    results = finder.find_best_combinations(available_words, target_word, top_k=5)
-
-    if results:
-        print("🏆 BEST COMBINATIONS:")
-        for i, result in enumerate(results, 1):
-            print(f"{i}. {result['word1']} + {result['word2']} = {result['score']:.3f} ({result['confidence']})")
-    else:
-        print("❌ No combinations found")
-
-    return results
-
-
-if __name__ == "__main__":
-    test_semantic_finder()

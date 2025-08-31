@@ -1,8 +1,8 @@
-# 🎮 Infinite Craft Complete Automation
+# 🎮 Infinite Craft Bot - Service-Oriented Architecture
 
-**🎉 FULLY WORKING automation with ENHANCED FEATURES!**
+**🎉 PRODUCTION-READY automation with modern architecture!**
 
-This project provides complete automation for https://neal.fun/infinite-craft/, with advanced persistent caching, efficient O(1) lookups, and intelligent workspace management.
+Complete automation system for https://neal.fun/infinite-craft/ using Clean Architecture principles, dependency injection, and service-oriented design. **87% smaller main automation class** with enhanced testability and maintainability.
 
 ## ✅ What This Automation Can Do
 

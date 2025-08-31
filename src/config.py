@@ -53,6 +53,8 @@ class Config:
         self.CHROME_DEBUG_PORT = self._get_int_env("CHROME_DEBUG_PORT", 9222)
         self.CHROME_CONNECTION_TIMEOUT = self._get_int_env("CHROME_CONNECTION_TIMEOUT", 5)
         self.GAME_LOAD_TIMEOUT = self._get_int_env("GAME_LOAD_TIMEOUT", 10)
+        self.IMPLICIT_WAIT_TIME = self._get_float_env("IMPLICIT_WAIT_TIME", 2.0)
+        self.EXPLICIT_WAIT_TIME = self._get_float_env("EXPLICIT_WAIT_TIME", 10.0)
 
         # ================================
         # GAME TIMING SETTINGS (from utils.py)
@@ -106,6 +108,11 @@ class Config:
         # ================================
         self.LOG_LEVEL = self._get_env("LOG_LEVEL", "INFO")
         self.ENABLE_TIMING_LOGS = self._get_bool_env("ENABLE_TIMING_LOGS", True)
+
+        # ================================
+        # CACHE BEHAVIOR SETTINGS
+        # ================================
+        self.IGNORE_CACHE = self._get_bool_env("IGNORE_CACHE", False)
         self.ENABLE_DEBUG_LOGS = self._get_bool_env("ENABLE_DEBUG_LOGS", False)
 
         # ================================
@@ -113,6 +120,18 @@ class Config:
         # ================================
         self.AUTOMATION_CACHE_FILE = self._get_env("AUTOMATION_CACHE_FILE", "automation.cache.json")
         self.EMBEDDINGS_CACHE_FILE = self._get_env("EMBEDDINGS_CACHE_FILE", "embeddings.cache.json")
+        self.SEMANTIC_MODEL_NAME = self._get_env("SEMANTIC_MODEL_NAME", "all-MiniLM-L6-v2")
+
+        # ================================
+        # AUTOMATION RUN PARAMETERS
+        # ================================
+        self.DEFAULT_AUTOMATION_TYPE = self._get_env("DEFAULT_AUTOMATION_TYPE", "hunt")
+        self.DEFAULT_TARGET_WORD = self._get_env("DEFAULT_TARGET_WORD", "Teleport")
+        self.DEFAULT_TARGET_ELEMENTS = self._get_int_env("DEFAULT_TARGET_ELEMENTS", 20)
+        self.DEFAULT_MAX_HUNT_ATTEMPTS = self._get_int_env("DEFAULT_MAX_HUNT_ATTEMPTS", 50)
+        self.DEFAULT_MAX_DISCOVERY_ATTEMPTS = self._get_int_env("DEFAULT_MAX_DISCOVERY_ATTEMPTS", 50)
+        self.DEFAULT_COMBINATIONS_PER_ITERATION = self._get_int_env("DEFAULT_COMBINATIONS_PER_ITERATION", 5)
+        self.DEFAULT_SEMANTIC_THRESHOLD = self._get_float_env("DEFAULT_SEMANTIC_THRESHOLD", 0.3)
 
         # ================================
         # TESTING AND DEVELOPMENT
