@@ -1,2 +1,17 @@
 # Every json file that ends with cache.json
 *.cache.json
+
+# any __pycache__ folder
+__pycache__/
+
+# venv
+venv/
+
+# env
+env/
+.env
+
+# Memory bank
+memory-bank/
+
+.vscode/

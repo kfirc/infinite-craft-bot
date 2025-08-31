@@ -1,0 +1,144 @@
+# Infinite Craft Bot Configuration Template
+# Copy this file to .env in the project root and modify values as needed
+
+# ================================
+# ENVIRONMENT SELECTION
+# ================================
+INFINITE_CRAFT_ENV=development
+
+# ================================
+# USER INTERACTION SETTINGS
+# ================================
+# Skip all "Press Enter" prompts for automated runs
+SKIP_ENTER_PROMPT=true
+
+# Automatically assume website is ready without user confirmation
+AUTO_ASSUME_WEBSITE_READY=true
+
+# ================================
+# BROWSER SETTINGS (Real values from code)
+# ================================
+# Chrome remote debugging port
+CHROME_DEBUG_PORT=9222
+
+# Timeout for connecting to Chrome (from utils.py line 769)
+CHROME_CONNECTION_TIMEOUT=5
+
+# Timeout for game loading (from utils.py line 1002)
+GAME_LOAD_TIMEOUT=10
+
+# ================================
+# GAME TIMING SETTINGS (From actual hardcoded values)
+# ================================
+# Maximum time to wait for element merges (game rule: 2 seconds max)
+MERGE_MAX_WAIT_TIME=2.0
+
+# Maximum time to wait for element appearance after drag
+ELEMENT_APPEARANCE_MAX_WAIT=2.0
+
+# Polling interval for checking workspace changes (from utils.py lines 312, 382)
+POLL_INTERVAL=0.1
+
+# Required stable checks before considering merge complete (from utils.py line 315)
+STABLE_CHECKS_REQUIRED=3
+
+# ================================
+# ACTUAL DELAYS USED IN CODE (from time.sleep calls)
+# ================================
+# Delay after combination processing (from utils.py line 1818)
+COMBINATION_PROCESSING_DELAY=0.8
+
+# Delay after scrolling operations (from utils.py line 1133)
+SCROLL_COMPLETION_DELAY=0.3
+
+# Delay for combination result processing (from utils.py line 1473)
+COMBINATION_RESULT_DELAY=4.0
+
+# Delay when switching Chrome tabs (from utils.py line 798)
+CHROME_TAB_SWITCH_DELAY=3.0
+
+# Delay for closing dialogs (from utils.py multiple lines)
+DIALOG_CLOSE_DELAY=0.5
+
+# Delay for menu operations (from utils.py lines 1604, 1611)
+MENU_OPERATION_DELAY=1.0
+
+# Delay for save operations (from utils.py lines 1618, 1639)
+SAVE_OPERATION_DELAY=2.0
+
+# ================================
+# AUTOMATION STRATEGY SETTINGS
+# ================================
+# Maximum attempts for general operations
+DEFAULT_MAX_ATTEMPTS=50
+
+# Max attempts between successful combinations
+MAX_ATTEMPTS_BETWEEN_SUCCESS=50
+
+# Clear workspace after this many attempts (from utils.py line 140)
+MAX_ATTEMPTS_BEFORE_CLEAR=5
+
+# Maximum drag operation retries
+DRAG_MAX_RETRIES=3
+
+# Target word specific settings
+TARGET_WORD_MAX_ATTEMPTS=50
+TOP_COMBINATIONS_PER_ITERATION=5
+
+# ================================
+# GAME MECHANICS SETTINGS (Real values from utils.py)
+# ================================
+# Number of distinct workspace locations (from workspace management)
+WORKSPACE_LOCATIONS_COUNT=5
+
+# Merge distance tolerance (from utils.py line 328)
+MERGE_DISTANCE_TOLERANCE=50
+
+# Element position tolerance (from utils.py line 605)
+ELEMENT_POSITION_TOLERANCE=60
+
+# Drag pixel steps (from utils.py line 1162)
+DRAG_PIXEL_STEPS=300
+
+# Maximum drag steps (from utils.py line 1224)
+DRAG_MAX_STEPS=3
+
+# Drag hold duration (from utils.py line 1162)
+DRAG_HOLD_DURATION=0.05
+
+# Maximum scroll attempts (from scroll retry logic)
+SCROLL_ATTEMPTS_MAX=3
+
+# ================================
+# LOGGING SETTINGS
+# ================================
+# Logging level: DEBUG, INFO, WARNING, ERROR
+LOG_LEVEL=INFO
+
+# Enable performance timing measurements
+ENABLE_TIMING_LOGS=true
+
+# Enable detailed debug logs
+ENABLE_DEBUG_LOGS=false
+
+# ================================
+# FILE PATHS AND CACHING
+# ================================
+# Cache file locations (relative to project root)
+AUTOMATION_CACHE_FILE=automation.cache.json
+EMBEDDINGS_CACHE_FILE=embeddings.cache.json
+
+# ================================
+# TESTING AND DEVELOPMENT
+# ================================
+# Enable test mode (may skip certain validations)
+TEST_MODE=false
+
+# Dry run mode (simulate operations without actual execution)
+DRY_RUN=false
+
+# Enable performance timing measurements
+ENABLE_PERFORMANCE_TIMING=true
+
+# Time to keep browser open for inspection (from utils.py line 2076)
+KEEP_BROWSER_OPEN_DELAY=10.0
