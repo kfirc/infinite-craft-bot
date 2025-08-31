@@ -43,8 +43,15 @@ class CacheService(ICacheService):
             "session_start": datetime.now(),
         }
 
-        # Auto-load cache on initialization
-        self.load_cache_from_file(file_path)
+        # Check IGNORE_CACHE setting and conditionally load existing cache
+        from config import config
+
+        if getattr(config, "IGNORE_CACHE", False):
+            self.logger.info("🔄 IGNORE_CACHE enabled - starting with empty cache (will still save at end)")
+            self.combination_logic.clear_cache()  # Start empty
+        else:
+            # Auto-load cache on initialization
+            self.load_cache_from_file(file_path)
 
     def load_cache_from_file(self, file_path: str) -> None:
         """Load combination cache from file with proper domain model conversion."""
@@ -75,34 +82,86 @@ class CacheService(ICacheService):
             self.combination_logic.clear_cache()
 
     def save_cache_to_file(self, file_path: str) -> None:
-        """Save combination cache to file for persistence."""
+        """Save combination cache to file, merging with existing cache data."""
         try:
             # Ensure directory exists
             cache_path = Path(file_path)
             cache_path.parent.mkdir(parents=True, exist_ok=True)
 
-            # Get cache data from domain service
-            cache_data = self.combination_logic.get_cached_combinations_for_export()
+            # Load existing cache data if file exists
+            existing_cache = {}
+            if cache_path.exists():
+                try:
+                    with open(file_path, "r") as f:
+                        existing_cache = json.load(f)
+                        self.logger.debug(
+                            f"📥 Loaded existing cache for merging: {
+                                len(existing_cache.get('successful', {}))} successful"
+                        )
+                except Exception as e:
+                    self.logger.warning(f"⚠️ Could not load existing cache for merging: {e}")
+                    existing_cache = {}
 
-            # Add additional metadata
+            # Get current session's cache data
+            session_cache_data = self.combination_logic.get_cached_combinations_for_export()
+
+            # Merge session data with existing cache
+            merged_cache = {
+                "successful": {},
+                "failed": set(),
+                "tested": set(),
+            }
+
+            # Merge successful combinations (session takes precedence for conflicts)
+            if "successful" in existing_cache:
+                merged_cache["successful"].update(existing_cache["successful"])
+            merged_cache["successful"].update(session_cache_data.get("successful", {}))
+
+            # Merge failed combinations
+            if "failed" in existing_cache:
+                merged_cache["failed"].update(existing_cache["failed"])
+            merged_cache["failed"].update(session_cache_data.get("failed", []))
+
+            # Merge tested combinations
+            if "tested" in existing_cache:
+                merged_cache["tested"].update(existing_cache["tested"])
+            merged_cache["tested"].update(session_cache_data.get("tested", []))
+
+            # Convert sets back to lists for JSON serialization
+            merged_cache["failed"] = list(merged_cache["failed"])
+            merged_cache["tested"] = list(merged_cache["tested"])
+
+            # Add metadata
             stats = self.combination_logic.get_combination_stats()
-            cache_data.update(
+            merged_cache.update(
                 {
                     "last_updated": datetime.now().isoformat(),
-                    "total_successful": stats["successful"],
-                    "total_failed": stats["failed"],
-                    "total_tested": stats["total_tested"],
-                    "success_rate": stats["success_rate"],
+                    "total_successful": len(merged_cache["successful"]),
+                    "total_failed": len(merged_cache["failed"]),
+                    "total_tested": len(merged_cache["tested"]),
+                    "success_rate": len(merged_cache["successful"]) / max(len(merged_cache["tested"]), 1),
+                    "session_successful": stats["successful"],
+                    "session_failed": stats["failed"],
+                    "session_tested": stats["total_tested"],
+                    "exported_at": datetime.now().isoformat(),
                 }
             )
 
+            # Save merged cache
             with open(file_path, "w") as f:
-                json.dump(cache_data, f, indent=2, default=str)
+                json.dump(merged_cache, f, indent=2, default=str)
 
-            self.logger.debug(f"💾 Cache saved to {file_path}")
+            self.logger.info(
+                f"💾 Cache merged and saved: {len(merged_cache['successful'])} successful, {
+                    len(merged_cache['failed'])} failed, {len(merged_cache['tested'])} total"
+            )
 
         except Exception as e:
             self.logger.error(f"❌ Failed to save cache: {e}")
+
+    def save_cache(self) -> None:
+        """Save cache using the default file path."""
+        self.save_cache_to_file(self.file_path)
 
     def is_combination_tested(self, combination: Combination) -> bool:
         """Check if combination has been tested."""
@@ -192,9 +251,21 @@ class CacheService(ICacheService):
         # This would require converting names to elements, but for migration we can use
         # the original cache key approach
         cache_key = "+".join(sorted([elem1_name.lower(), elem2_name.lower()]))
-        self.combination_logic.get_combination_stats()
-        # This is a simplified check - in full migration we'd create proper Elements
-        return any(cache_key in str(combo_key) for combo_key in self.combination_logic._tested_combinations)
+
+        # Get tested combinations and do EXACT matching (not substring)
+        tested_keys = set()
+        for combo_key in self.combination_logic._tested_combinations:
+            tested_keys.add(str(combo_key))
+
+        # Check for exact match
+        is_tested = cache_key in tested_keys
+
+        if is_tested:
+            self.logger.debug(f"✅ Found exact cache match for: {cache_key}")
+        else:
+            self.logger.debug(f"❌ No cache match for: {cache_key} (will test)")
+
+        return is_tested
 
     def create_combination_from_names(
         self, elem1_name: str, elem2_name: str, available_elements: List[Element]

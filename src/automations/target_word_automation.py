@@ -95,11 +95,12 @@ class ServiceTargetWordAutomation(ServiceAutomationController):
             # Convert elements to strings for semantic finder
             element_names = [elem.name for elem in available_elements]
 
-            # Get semantic combinations from semantic service
+            # Get semantic combinations from semantic service (with cache filtering)
             semantic_combinations = self.semantic_service.find_best_combinations(
                 available_words=element_names,
                 target_word=self.target_word,
                 top_k=self.top_combinations_per_iteration * 2,  # Get extra for filtering
+                cache_service=self.automation.cache,  # Enable cache filtering!
             )
 
             # Convert back to domain models and filter untested
@@ -126,9 +127,8 @@ class ServiceTargetWordAutomation(ServiceAutomationController):
                     )
 
                     if combination:
-                        # Only include if not already tested
-                        if not self.automation.cache.is_combination_tested(combination):
-                            valid_combinations.append((combination, score))
+                        # Cache filtering already done in SemanticService, so add directly
+                        valid_combinations.append((combination, score))
 
             # Sort by semantic score (highest first) and limit results
             valid_combinations.sort(key=lambda x: x[1], reverse=True)

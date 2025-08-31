@@ -124,8 +124,9 @@ class ServiceAutomationController:
                     self.log("INFO", f"✅ Combination attempted on attempt {attempt_num} - drag worked, no new element")
                     return None  # Indicate no new element, but don't retry
                 else:
-                    # Convert CombinationResult to dict for compatibility
-                    return self.automation.combine_elements(word1, word2)
+                    # Failed combination - already tested and cached, don't call again
+                    self.log("INFO", f"❌ Combination failed on attempt {attempt_num} - {word1} + {word2}")
+                    return None  # Failed but don't retry
             else:
                 # True drag failure - elements never appeared on board
                 if attempt < max_retries - 1:

@@ -57,12 +57,9 @@ class CombinationService:
             CombinationResult with outcome or None if failed
         """
         try:
-            from config import config
+            pass
 
-            # Log cache behavior for transparency
-            if config.IGNORE_CACHE:
-                self.logger.debug(f"🔄 IGNORE_CACHE: Force testing {combination.display_name} (cache bypassed)")
-
+            # IGNORE_CACHE only affects initial cache loading, not runtime behavior
             # Step 1: Get and validate workspace location
             target_location = self.workspace_manager.get_next_workspace_location()
 

@@ -399,8 +399,14 @@ class AutomationOrchestrator:
                     stats['elements_created']} elements created"
             )
 
+            # Save cache at end of session
+            self.logger.info("💾 Saving combination cache...")
+            self.cache.save_cache()
+
             # Close browser
+            self.logger.info("🔚 Closing browser...")
             self.browser.close()
+            self.logger.info("✅ Browser closed")
 
             self.logger.info("✅ Automation orchestrator shut down")
 
